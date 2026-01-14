@@ -20,9 +20,8 @@ Complete documentation for migrating WordPress sites to static GitHub repositori
 Complete all items before starting the migration:
 
 - [ ] **Disable Hummingbird plugin** (Simply Static conflicts - Simply Static will warn if active) - CRITICAL
-- [ ] **Disable Defender Pro** (or whitelist crawler / allow loopback) - CRITICAL - blocks crawler
-- [ ] **Disable problematic plugins** (see [Plugin Management](#plugin-management) section below)
-- [ ] **Clear Divi cache** (Divi → Theme Options → Performance → Clear) - CRITICAL
+- [ ] **Disable problematic plugins** (see [Plugin Management](#plugin-management) section below) - only if conflicts occur
+- [ ] **Clear Divi cache** (Divi → Theme Options → Performance → Clear) - Optional, only for troubleshooting if export issues occur
 - [ ] **Run Simply Static Diagnostics** (Simply Static → Diagnostics) - must pass all checks
 - [ ] **Verify all diagnostic checks pass** - do not proceed if critical checks fail
 - [ ] **Set Cloudflare to Developer Mode** (disable caching during migration)
@@ -31,12 +30,11 @@ Complete all items before starting the migration:
 - [ ] **Create GitHub Personal Access Token (PAT)** (see Step 1 in SOP)
 - [ ] **Get GitHub org admin approval for PAT** (if using organization account)
 - [ ] **Create GitHub repository with README** (Simply Static needs repository to exist first)
-- [ ] **Plan GitHub Pages configuration** (private repos need paid plan OR use `gh-pages` branch OR `/docs` folder)
+- [ ] **Plan GitHub Pages configuration** (can run from root of `main` branch - no need for `gh-pages` branch)
 - [ ] **Configure Simply Static file path settings** (General → Replacing URLs: Absolute URL for production, Relative Path for local testing)
-- [ ] **Configure Simply Static GitHub deployment settings** (branch: `gh-pages` OR folder: `docs` for private repos)
-- [ ] **Test export to local ZIP first** (before GitHub deployment)
-- [ ] **Set up local web server for testing** (see Step 6.2 in SOP)
-- [ ] **Test static export via local web server** (use `python -m http.server 8081`, not double-click)
+- [ ] **Configure Simply Static GitHub deployment settings** (branch: `main`, folder: root)
+- [ ] **Set up local web server for testing** (see Step 6 in SOP)
+- [ ] **Test static export via local web server** (use `python -m http.server 8081`, not double-click) - test after export
 - [ ] **Plan Cloudflare staging site setup** (DNS, SSL, caching configuration)
 
 ---
@@ -65,15 +63,15 @@ These plugins cause issues in static HTML exports and should be **disabled** bef
 - **Impact:** Minor bloat, but meta tags are already exported
 - **Action:** **Disable before export** - meta tags are already in the static HTML
 
-#### 4. Security Plugins (CRITICAL - Crawler Blocking)
+#### 4. Security Plugins (Only if Conflicts Occur)
 - **Examples:** Defender Pro, Wordfence, iThemes Security, WP Defender
 - **Problem:** 
-  - Block loopback / "bot-like" requests from Simply Static's crawler
-  - Serve different markup to non-logged-in users / certain user agents
-  - Inject optimizations that rely on runtime JavaScript
-  - Can cause incomplete exports or missing content
-- **Action:** **Disable before export** (or whitelist crawler / allow loopback requests)
-- **Note:** This is a common cause of incomplete exports - security plugins often block the crawler
+  - May block loopback / "bot-like" requests from Simply Static's crawler
+  - May serve different markup to non-logged-in users / certain user agents
+  - May inject optimizations that rely on runtime JavaScript
+  - Can cause incomplete exports or missing content if conflicts occur
+- **Action:** **Only disable if you encounter conflicts or issues** (or whitelist crawler / allow loopback requests)
+- **Note:** Not all security plugins cause issues - only disable if export problems occur
 
 #### 5. Caching Plugins
 - **Examples:** WP Super Cache, W3 Total Cache, Hummingbird
@@ -82,13 +80,13 @@ These plugins cause issues in static HTML exports and should be **disabled** bef
 
 #### 6. Backup Plugins
 - **Examples:** Snapshot Backups, UpdraftPlus
-- **Problem:** Not needed for static export
-- **Action:** **Disable before export**
+- **Problem:** Generally no conflicts with static export
+- **Action:** **Can be left enabled** - only disable if conflicts occur
 
 #### 7. Contact Form Plugins
 - **Examples:** Forminator, Contact Form 7, Gravity Forms
-- **Problem:** Forms won't work in static HTML (no backend processing)
-- **Action:** **Disable before export** - replace with static contact links or third-party form service
+- **Problem:** Forms won't work in static HTML (no backend processing) - but no conflicts with export
+- **Action:** **Can be left enabled** - forms will need to be rebuilt/replaced with custom code or third-party form service in the static site
 
 ### Plugins to Keep Enabled
 
@@ -276,9 +274,16 @@ Before beginning the migration, ensure you have:
    
    **GitHub Pages Branch/Folder Requirements:**
    
-   GitHub Pages expects one of these configurations:
+   **Simplest Configuration (Recommended):**
+   - Set **Branch Name** in Simply Static to: `main`
+   - Leave **Folder** blank (root)
+   - Configure in GitHub: Settings → Pages → Source: `/` (root) on `main` branch
+   - **Note:** This works for both public and private repositories (private repos require paid GitHub plan)
+   - **No need for `gh-pages` branch or `/docs` folder** - you can run directly from root
    
-   **Option 1: `gh-pages` Branch (Recommended)**
+   **Alternative Options (If Needed):**
+   
+   **Option 1: `gh-pages` Branch**
    - Set **Branch Name** in Simply Static to: `gh-pages`
    - GitHub Pages will serve from the `gh-pages` branch
    - Configure in GitHub: Settings → Pages → Source: `gh-pages` branch
@@ -289,24 +294,10 @@ Before beginning the migration, ensure you have:
    - GitHub Pages will serve from `/docs` folder on `main` branch
    - Configure in GitHub: Settings → Pages → Source: `/docs` folder on `main` branch
    
-   **Option 3: Root of `main` Branch (Public Repos Only)**
-   - Set **Branch Name** to: `main`
-   - Leave **Folder** blank (root)
-   - Only works for **public repositories** on free accounts
-   - Configure in GitHub: Settings → Pages → Source: `/` (root) on `main` branch
-   
-   **Current Configuration (All Type Towing):**
-   - Repository: Private
-   - Branch: `main`
-   - Folder: (blank - root)
-   - **Issue:** This configuration won't work with GitHub Pages on a private repo
-   - **Solution:** Either:
-     1. Use `gh-pages` branch (change Branch Name to `gh-pages`)
-     2. Use `/docs` folder (set Folder to `docs` and keep Branch as `main`)
-     3. Make repository public (if acceptable)
-     4. Upgrade to paid GitHub plan (if private repo required)
-   
-   **Note:** This doesn't affect local testing (`http://localhost:8080/`), but will cause issues when trying to publish via GitHub Pages.
+   **Private Repository Limitations:**
+   - **GitHub Pages from private repos requires a paid GitHub plan** (GitHub Pro, Team, or Enterprise)
+   - Organization policy must allow GitHub Pages for private repositories
+   - Free accounts cannot use GitHub Pages with private repositories
 
 4. **Save Settings**
    - Click "Save Changes"
@@ -322,22 +313,25 @@ Before beginning the migration, ensure you have:
    - **Note:** Simply Static will display a warning if Hummingbird is still active during export
    - Re-enable after migration if needed for WordPress site
 
-2. **Disable Other Conflicting Plugins (CRITICAL)**
+2. **Disable Conflicting Plugins (Only if Issues Occur)**
    - Review [Plugin Management](#plugin-management) section for complete list
-   - **Disable Defender Pro** (or whitelist crawler / allow loopback requests) - **CRITICAL**
-   - Disable **WP Smush Pro** (causes lazy-loading issues in static HTML)
-   - Disable **Beehive Analytics / Matomo** (won't work in static HTML)
-   - Disable **SmartCrawl SEO** (unnecessary overhead)
-   - Disable **Hustle** and other optimization plugins
-   - Disable all security, caching, and backup plugins
-   - **Why:** Security/hardening plugins often block loopback/"bot-like" requests from Simply Static's crawler
+   - **Only disable plugins if you encounter conflicts or export issues**
+   - Common conflicts:
+     - **WP Smush Pro** (causes lazy-loading issues in static HTML)
+     - **Beehive Analytics / Matomo** (won't work in static HTML)
+     - **SmartCrawl SEO** (unnecessary overhead)
+     - **Hustle** and other optimization plugins
+   - **Security plugins:** Only disable if crawler is blocked or export fails
+   - **Backup plugins:** Generally safe to leave enabled
+   - **Contact form plugins:** Safe to leave enabled (forms will need to be rebuilt in static site)
    - Re-enable after migration if needed for WordPress site
 
-3. **Clear Divi Cache (CRITICAL)**
+3. **Clear Divi Cache (Optional - Troubleshooting Only)**
+   - **Not required for normal exports**
+   - Only clear if you encounter export issues or stale content
    - Navigate to **Divi → Theme Options → Performance**
    - Click **"Clear"** to clear Divi cache
-   - **Why:** Cached content may interfere with export or serve different markup
-   - This ensures fresh content is exported
+   - **When to use:** If export shows old/cached content or missing sections
 
 4. **Run Simply Static Diagnostics**
    - Navigate to **Simply Static → Diagnostics**
@@ -402,24 +396,44 @@ Before beginning the migration, ensure you have:
 
 ### Step 6: Execute Migration
 
-1. **Export to Local ZIP (Recommended First Step)**
+1. **Export to GitHub Repository (Primary Option)**
+   
    - In WordPress admin, go to **Simply Static → Generate**
-   - **Export Type:** Select **"ZIP Archive"** (not GitHub deployment yet)
+   - **Export Type:** Select **"GitHub"** deployment
+   - **Verify GitHub settings are configured** (from Step 3)
+   - **Important:** Use **"Full Export"** (not single page export)
+   - Click **"Start Static Site Export"**
+   - Monitor export progress
+   - Wait for export to complete
+
+2. **Alternative: Export to Local ZIP (If Needed)**
+   
+   - **Use this option if you prefer to test locally first or if GitHub export fails**
+   - In WordPress admin, go to **Simply Static → Generate**
+   - **Export Type:** Select **"ZIP Archive"**
    - **Important:** Use **"Full Export"** (not single page export)
    - Click **"Start Static Site Export"**
    - Monitor export progress
    - Wait for export to complete
    - Download the ZIP file when ready
+   - Extract ZIP to a folder for testing
 
-2. **Set Up Local Web Server for Testing**
+3. **Set Up Local Web Server for Testing**
    
    **Why:** Always test exports via HTTP server, never open HTML files directly (`file://` protocol)
    
+   **If you exported to GitHub:**
+   - Clone or pull the repository locally
+   - Navigate to the repository folder
+   
+   **If you exported to ZIP:**
+   - Extract ZIP to a folder
+   - Navigate to extracted folder
+   
    **Python HTTP Server (Recommended):**
    ```powershell
-   # Extract ZIP to a folder
-   # Navigate to extracted folder
-   cd C:\path\to\extracted\export
+   # Navigate to export folder (GitHub repo or extracted ZIP)
+   cd C:\path\to\export\folder
    
    # Start HTTP server
    python -m http.server 8081
@@ -435,7 +449,7 @@ Before beginning the migration, ensure you have:
    
    **See:** `ROOT_CAUSE_ANALYSIS.md` → "Local Testing with HTTP Server" section for detailed instructions and troubleshooting
 
-3. **Test Local Export**
+4. **Test Export via Local Web Server**
    - Open browser to `http://localhost:8081`
    - **Check for issues:**
      - ✅ All CSS files load (check Network tab in DevTools)
@@ -449,30 +463,19 @@ Before beginning the migration, ensure you have:
      - Verify no `ERR_FILE_NOT_FOUND` errors in console
    - **If problems found:** See troubleshooting steps below
 
-4. **Fix Issues (If Any)**
+5. **Fix Issues (If Any)**
    
    **If export has problems:**
-   - **Missing content sections:** Re-check diagnostics, disable security plugins, clear Divi cache
+   - **Missing content sections:** Re-check diagnostics, disable conflicting plugins if needed
    - **Broken CSS/JS paths:** Verify Simply Static path settings (Step 5)
    - **Missing assets:** Ensure Divi integration is enabled, check `wp-content/et-cache/` exists
    - **Plugin code in export:** Disable problematic plugins (Step 4.2)
    - **Make necessary fixes in WordPress**
-   - **Re-run export to local ZIP**
+   - **Re-run export** (to GitHub or ZIP)
    - **Re-test via local web server**
    - **Repeat until export is clean**
 
-5. **Export to GitHub (After Local Testing Passes)**
-   
-   **Only proceed after local ZIP export tests successfully!**
-   
-   - In WordPress admin, go to **Simply Static → Generate**
-   - **Export Type:** Select **"GitHub"** deployment
-   - **Verify GitHub settings are configured** (from Step 3)
-   - Click **"Start Static Site Export"**
-   - Monitor export progress
-   - Wait for export to complete
-
-6. **Verify GitHub Deployment**
+6. **Verify GitHub Deployment** (If exported to GitHub)
    - Go to your GitHub repository
    - Verify files have been pushed successfully
    - Check commit history for new commit from Simply Static
@@ -482,10 +485,10 @@ Before beginning the migration, ensure you have:
      - ✅ Check `wp-content/uploads/` exists
      - ✅ Check `wp-includes/` exists
 
-7. **Verify File Paths in GitHub Export**
-   - Open a few HTML files in GitHub repository
-   - Search for path references (e.g., `/wp-content/`)
-   - **For Absolute URLs:** Verify paths point to your production domain
+7. **Verify File Paths in Export**
+   - Open a few HTML files (in GitHub or extracted ZIP)
+   - Search for path references (e.g., `/wp-content/` or full URLs)
+   - **For Absolute URLs:** Verify paths point to your production/staging domain
    - **For Relative Paths:** Verify paths are relative (no leading `/`)
    - **If paths are incorrect:** Re-check Simply Static settings (Step 5) and re-export
 
@@ -498,17 +501,16 @@ Before beginning the migration, ensure you have:
 
 1. **Set Up Staging Site via Cloudflare**
    
-   **Configure Cloudflare for Static Site:**
+   **Configure Cloudflare DNS for Staging:**
    
    - Log in to Cloudflare dashboard
    - Navigate to your domain's DNS settings
-   - **If using GitHub Pages:**
-     - Add/update CNAME record pointing to GitHub Pages domain
-     - Example: `staging.yoursite.com` → `yourusername.github.io`
-     - Or use A records if GitHub provides IP addresses
-   - **If using custom hosting:**
-     - Configure DNS records to point to your static hosting provider
-     - Update A/CNAME records as needed
+   - **Update the `staging` DNS record:**
+     - **Type:** CNAME
+     - **Name:** `staging`
+     - **Content/Target:** `freeforcharity.github.io` (or your organization's GitHub Pages hostname)
+     - **Proxy status:** Proxied (orange cloud)
+     - **TTL:** Auto
    - **SSL/TLS Settings:**
      - Set SSL/TLS encryption mode to **"Full"** or **"Full (strict)"**
      - Enable **"Always Use HTTPS"** redirect
@@ -520,7 +522,7 @@ Before beginning the migration, ensure you have:
      - Configure redirects if necessary
 
 2. **Verify Staging Site**
-   - Test staging site URL in browser
+   - Test `staging.alltypetowing.com` in browser
    - **Verify:**
      - ✅ All pages load correctly
      - ✅ CSS and JavaScript load
@@ -533,21 +535,33 @@ Before beginning the migration, ensure you have:
      - Verify DNS records point correctly
    - **Test from multiple locations/devices**
 
-3. **Cloudflare DNS Setup (Additional Configuration)**
-   - Associate staging DNS in Cloudflare with static site
-   - Update DNS records if needed
-   - Verify DNS propagation
-   - Configure any additional Cloudflare features (CDN, security, etc.)
-
-1. **Cloudflare DNS Setup**
-   - Associate staging DNS in Cloudflare with static site
-   - Update DNS records if needed
-   - Verify DNS propagation
-
-2. **Staging Site Verification**
-   - Test staging site URL
-   - Verify all pages load correctly
-   - Check asset loading
+3. **Final Production Migration (When Ready)**
+   
+   **Once staging site is verified and ready for production:**
+   
+   - **Update Simply Static Static URL:**
+     - Change from `https://staging.alltypetowing.com` to `https://alltypetowing.com`
+     - Re-export to GitHub
+   
+   - **Update GitHub Pages Custom Domain:**
+     - Remove `staging.alltypetowing.com` custom domain
+     - Add `alltypetowing.com` as custom domain
+     - Update CNAME file in repository if needed
+   
+   - **Update Cloudflare DNS for Production:**
+     - Change the `alltypetowing.com` A record from WordPress server IP to GitHub Pages
+     - **Type:** CNAME (recommended) or A records
+     - **Name:** `alltypetowing.com` (or `@`)
+     - **Content/Target:** `freeforcharity.github.io` (or GitHub Pages IPs)
+     - **Proxy status:** Proxied
+   
+   - **Verify Production Site:**
+     - Test `alltypetowing.com` loads from GitHub Pages
+     - Verify SSL certificate
+     - Test all functionality
+     - Monitor for any issues
+   
+   **Migration Complete:** Your WordPress site is now fully migrated to static GitHub Pages!
 
 ---
 
@@ -1261,18 +1275,28 @@ Simply Static supports webhook URLs for notifying external services after deploy
 
 ## Revision History
 
-- **2025-01-27:** Major workflow update:
+- **2025-01-27:** Major workflow and documentation updates:
   - Reorganized Standard Operating Procedure with proper step-by-step workflow
   - Added explicit Hummingbird disable step (Step 4.1)
   - Added Simply Static Diagnostics step (Step 4.4-4.5) - must pass all checks before export
-  - Added file path configuration step (Step 5) - ensure paths are not absolute for production
+  - Added file path configuration step (Step 5) - ensure paths are configured correctly
   - Updated export workflow (Step 6):
-    - Export to local ZIP first (recommended)
-    - Set up local web server for testing
-    - Test local export thoroughly
-    - Fix issues and re-export if needed
-    - Only export to GitHub after local testing passes
-  - Added Cloudflare staging site setup (Step 7.1) - detailed DNS and SSL configuration
+    - Export to GitHub repository as primary option
+    - Export to local ZIP as alternative option
+    - Both options should be tested with local web server
+    - Comprehensive testing checklist
+  - Updated plugin management section:
+    - Divi cache clearing: Changed from CRITICAL to optional/troubleshooting only
+    - Security plugins: Only disable if conflicts occur (not required)
+    - Backup plugins: Can be left enabled unless conflicts
+    - Contact form plugins: Can be left enabled (no conflicts, just need to rebuild forms)
+  - Updated GitHub Pages configuration:
+    - Clarified that you can run directly from root of `main` branch (no need for `gh-pages`)
+    - Simplified deployment options
+  - Updated Cloudflare staging setup (Step 7):
+    - Detailed DNS configuration for staging subdomain
+    - Added final production migration steps
+    - Clear workflow for moving from staging to production
   - Added comprehensive local testing instructions with HTTP server setup
   - Added troubleshooting workflow for failed exports
 - **2025-01-27:** Added Plugin Management section with detailed list of plugins to disable before export (WP Smush Pro, Beehive Analytics, SmartCrawl SEO, security/caching/backup plugins). Updated troubleshooting guide with plugin-related issues. Added plugin disable workflow and post-export cleanup procedures.
