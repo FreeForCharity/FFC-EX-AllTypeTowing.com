@@ -704,7 +704,327 @@ a,abbr,acronym,address,applet,b,big,blockquote,body,center,cite,code,dd,del,dfn,
 				
 				
 				<div class="et_pb_heading_container"><h1 class="et_pb_module_heading">Gallery</h1></div>
-			</div><div class="et_pb_module et_pb_gallery et_pb_gallery_0  et_pb_bg_layout_light et_pb_gallery_grid">
+			</div>
+			
+			<!-- Carousel Module -->
+			<div class="et_pb_module gallery_carousel_module">
+				<div class="gallery_carousel_container">
+					<div class="gallery_carousel_wrapper">
+						<div class="gallery_carousel_slides">
+							<div class="gallery_carousel_slide active">
+								<img src="/wp-content/uploads/2023/11/SemiTruck.jpg" alt="Semi Truck" loading="lazy">
+							</div>
+							<div class="gallery_carousel_slide">
+								<img src="/wp-content/uploads/2023/11/230779669_273249001270658_6364035769314519795_n.jpg" alt="Towing Service" loading="lazy">
+							</div>
+							<div class="gallery_carousel_slide">
+								<img src="/wp-content/uploads/2023/11/275684371_412268630702027_9088064533855097671_n.jpg" alt="Towing Service" loading="lazy">
+							</div>
+							<div class="gallery_carousel_slide">
+								<img src="/wp-content/uploads/2023/11/275700388_412268660702024_8020467486506012371_n.jpg" alt="Towing Service" loading="lazy">
+							</div>
+							<div class="gallery_carousel_slide">
+								<img src="/wp-content/uploads/2023/11/275672809_412268677368689_4935346497523026000_n.jpg" alt="Towing Service" loading="lazy">
+							</div>
+						</div>
+						<button class="gallery_carousel_button gallery_carousel_button_prev" aria-label="Previous slide">
+							<span aria-hidden="true">&#10094;</span>
+						</button>
+						<button class="gallery_carousel_button gallery_carousel_button_next" aria-label="Next slide">
+							<span aria-hidden="true">&#10095;</span>
+						</button>
+					</div>
+					<div class="gallery_carousel_indicators" role="tablist" aria-label="Slide navigation">
+						<button class="gallery_carousel_indicator active" aria-label="Go to slide 1" aria-selected="true" role="tab"></button>
+						<button class="gallery_carousel_indicator" aria-label="Go to slide 2" aria-selected="false" role="tab"></button>
+						<button class="gallery_carousel_indicator" aria-label="Go to slide 3" aria-selected="false" role="tab"></button>
+						<button class="gallery_carousel_indicator" aria-label="Go to slide 4" aria-selected="false" role="tab"></button>
+						<button class="gallery_carousel_indicator" aria-label="Go to slide 5" aria-selected="false" role="tab"></button>
+					</div>
+				</div>
+			</div>
+			
+			<style>
+				.gallery_carousel_module {
+					max-width: 1200px;
+					margin: 40px auto;
+					padding: 0 20px;
+				}
+				
+				.gallery_carousel_container {
+					position: relative;
+					width: 100%;
+				}
+				
+				.gallery_carousel_wrapper {
+					position: relative;
+					width: 100%;
+					overflow: hidden;
+					border-radius: 10px;
+					box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+					background: #f8f8f8;
+				}
+				
+				.gallery_carousel_slides {
+					position: relative;
+					width: 100%;
+					padding-top: 56.25%; /* 16:9 aspect ratio */
+				}
+				
+				.gallery_carousel_slide {
+					position: absolute;
+					top: 0;
+					left: 0;
+					width: 100%;
+					height: 100%;
+					opacity: 0;
+					transition: opacity 0.6s ease-in-out;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+				}
+				
+				.gallery_carousel_slide.active {
+					opacity: 1;
+					z-index: 1;
+				}
+				
+				.gallery_carousel_slide img {
+					max-width: 100%;
+					max-height: 100%;
+					width: auto;
+					height: auto;
+					object-fit: contain;
+					display: block;
+				}
+				
+				.gallery_carousel_button {
+					position: absolute;
+					top: 50%;
+					transform: translateY(-50%);
+					background: rgba(0, 0, 0, 0.5);
+					color: white;
+					border: none;
+					padding: 16px 20px;
+					font-size: 24px;
+					cursor: pointer;
+					z-index: 2;
+					transition: all 0.3s ease;
+					border-radius: 4px;
+				}
+				
+				.gallery_carousel_button:hover {
+					background: rgba(0, 0, 0, 0.8);
+					transform: translateY(-50%) scale(1.1);
+				}
+				
+				.gallery_carousel_button:focus {
+					outline: 2px solid #7EBEC5;
+					outline-offset: 2px;
+				}
+				
+				.gallery_carousel_button_prev {
+					left: 20px;
+				}
+				
+				.gallery_carousel_button_next {
+					right: 20px;
+				}
+				
+				.gallery_carousel_indicators {
+					display: flex;
+					justify-content: center;
+					gap: 12px;
+					margin-top: 20px;
+					padding: 10px 0;
+				}
+				
+				.gallery_carousel_indicator {
+					width: 12px;
+					height: 12px;
+					border-radius: 50%;
+					border: 2px solid #7EBEC5;
+					background: transparent;
+					cursor: pointer;
+					transition: all 0.3s ease;
+					padding: 0;
+				}
+				
+				.gallery_carousel_indicator:hover {
+					background: rgba(126, 190, 197, 0.5);
+					transform: scale(1.2);
+				}
+				
+				.gallery_carousel_indicator:focus {
+					outline: 2px solid #7EBEC5;
+					outline-offset: 2px;
+				}
+				
+				.gallery_carousel_indicator.active {
+					background: #7EBEC5;
+					transform: scale(1.2);
+				}
+				
+				/* Responsive design */
+				@media (max-width: 768px) {
+					.gallery_carousel_module {
+						margin: 20px auto;
+						padding: 0 10px;
+					}
+					
+					.gallery_carousel_button {
+						padding: 12px 16px;
+						font-size: 18px;
+					}
+					
+					.gallery_carousel_button_prev {
+						left: 10px;
+					}
+					
+					.gallery_carousel_button_next {
+						right: 10px;
+					}
+					
+					.gallery_carousel_indicators {
+						gap: 8px;
+					}
+					
+					.gallery_carousel_indicator {
+						width: 10px;
+						height: 10px;
+					}
+				}
+				
+				@media (max-width: 480px) {
+					.gallery_carousel_button {
+						padding: 10px 14px;
+						font-size: 16px;
+					}
+					
+					.gallery_carousel_button_prev {
+						left: 5px;
+					}
+					
+					.gallery_carousel_button_next {
+						right: 5px;
+					}
+				}
+			</style>
+			
+			<script>
+				(function($) {
+					$(document).ready(function() {
+						const $carousel = $('.gallery_carousel_wrapper');
+						const $slides = $('.gallery_carousel_slide');
+						const $indicators = $('.gallery_carousel_indicator');
+						const $prevBtn = $('.gallery_carousel_button_prev');
+						const $nextBtn = $('.gallery_carousel_button_next');
+						let currentSlide = 0;
+						const totalSlides = $slides.length;
+						let autoPlayInterval;
+						
+						function showSlide(index) {
+							// Ensure index is within bounds
+							if (index < 0) {
+								currentSlide = totalSlides - 1;
+							} else if (index >= totalSlides) {
+								currentSlide = 0;
+							} else {
+								currentSlide = index;
+							}
+							
+							// Update slides
+							$slides.removeClass('active');
+							$slides.eq(currentSlide).addClass('active');
+							
+							// Update indicators
+							$indicators.removeClass('active').attr('aria-selected', 'false');
+							$indicators.eq(currentSlide).addClass('active').attr('aria-selected', 'true');
+						}
+						
+						function nextSlide() {
+							showSlide(currentSlide + 1);
+						}
+						
+						function prevSlide() {
+							showSlide(currentSlide - 1);
+						}
+						
+						function startAutoPlay() {
+							autoPlayInterval = setInterval(nextSlide, 5000);
+						}
+						
+						function stopAutoPlay() {
+							clearInterval(autoPlayInterval);
+						}
+						
+						// Event listeners
+						$nextBtn.on('click', function() {
+							nextSlide();
+							stopAutoPlay();
+							startAutoPlay();
+						});
+						
+						$prevBtn.on('click', function() {
+							prevSlide();
+							stopAutoPlay();
+							startAutoPlay();
+						});
+						
+						$indicators.on('click', function() {
+							const index = $(this).index();
+							showSlide(index);
+							stopAutoPlay();
+							startAutoPlay();
+						});
+						
+						// Keyboard navigation
+						$carousel.on('keydown', function(e) {
+							if (e.key === 'ArrowLeft') {
+								prevSlide();
+								stopAutoPlay();
+								startAutoPlay();
+							} else if (e.key === 'ArrowRight') {
+								nextSlide();
+								stopAutoPlay();
+								startAutoPlay();
+							}
+						});
+						
+						// Pause on hover
+						$carousel.on('mouseenter', stopAutoPlay);
+						$carousel.on('mouseleave', startAutoPlay);
+						
+						// Touch support for mobile
+						let touchStartX = 0;
+						let touchEndX = 0;
+						
+						$carousel.on('touchstart', function(e) {
+							touchStartX = e.originalEvent.touches[0].clientX;
+						});
+						
+						$carousel.on('touchend', function(e) {
+							touchEndX = e.originalEvent.changedTouches[0].clientX;
+							const diff = touchStartX - touchEndX;
+							
+							if (Math.abs(diff) > 50) {
+								if (diff > 0) {
+									nextSlide();
+								} else {
+									prevSlide();
+								}
+								stopAutoPlay();
+								startAutoPlay();
+							}
+						});
+						
+						// Start auto-play
+						startAutoPlay();
+					});
+				})(jQuery);
+			</script>
+			
+			<div class="et_pb_module et_pb_gallery et_pb_gallery_0  et_pb_bg_layout_light et_pb_gallery_grid">
 				<div class="et_pb_gallery_items et_post_gallery clearfix" data-per_page="12"><div class="et_pb_gallery_item et_pb_grid_item et_pb_bg_layout_light et_pb_gallery_item_0_0"><div class="et_pb_gallery_image landscape">
 					<a href="/wp-content/uploads/2023/11/SemiTruck.jpg" title="SemiTruck">
 					<img decoding="async" width="400" height="284" data-src="/wp-content/uploads/2023/11/SemiTruck-400x284.jpg" data-srcset="/wp-content/uploads/2023/11/SemiTruck.jpg 1000w, /wp-content/uploads/2023/11/SemiTruck-400x284.jpg 400w, /wp-content/uploads/2023/11/SemiTruck-480x320.jpg 480w, /wp-content/uploads/2023/11/SemiTruck-768x512.jpg 768w, /wp-content/uploads/2023/11/SemiTruck-980x654.jpg 980w" data-sizes="(max-width:1000px) 100vw, 1000px" class="wp-image-199 lazyload" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjwvc3ZnPg==" style="--smush-placeholder-width: 400px; --smush-placeholder-aspect-ratio: 400/284;">
