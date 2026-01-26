@@ -709,7 +709,7 @@ a,abbr,acronym,address,applet,b,big,blockquote,body,center,cite,code,dd,del,dfn,
 			<!-- Carousel Module -->
 			<div class="et_pb_module gallery_carousel_module">
 				<div class="gallery_carousel_container">
-					<div class="gallery_carousel_wrapper">
+					<div class="gallery_carousel_wrapper" tabindex="0">
 						<div class="gallery_carousel_slides">
 							<div class="gallery_carousel_slide active">
 								<img src="/wp-content/uploads/2023/11/SemiTruck.jpg" alt="Semi Truck" loading="lazy">
@@ -958,36 +958,36 @@ a,abbr,acronym,address,applet,b,big,blockquote,body,center,cite,code,dd,del,dfn,
 							clearInterval(autoPlayInterval);
 						}
 						
+						function resetAutoPlay() {
+							stopAutoPlay();
+							startAutoPlay();
+						}
+						
 						// Event listeners
 						$nextBtn.on('click', function() {
 							nextSlide();
-							stopAutoPlay();
-							startAutoPlay();
+							resetAutoPlay();
 						});
 						
 						$prevBtn.on('click', function() {
 							prevSlide();
-							stopAutoPlay();
-							startAutoPlay();
+							resetAutoPlay();
 						});
 						
 						$indicators.on('click', function() {
 							const index = $(this).index();
 							showSlide(index);
-							stopAutoPlay();
-							startAutoPlay();
+							resetAutoPlay();
 						});
 						
 						// Keyboard navigation
 						$carousel.on('keydown', function(e) {
 							if (e.key === 'ArrowLeft') {
 								prevSlide();
-								stopAutoPlay();
-								startAutoPlay();
+								resetAutoPlay();
 							} else if (e.key === 'ArrowRight') {
 								nextSlide();
-								stopAutoPlay();
-								startAutoPlay();
+								resetAutoPlay();
 							}
 						});
 						
@@ -1000,21 +1000,24 @@ a,abbr,acronym,address,applet,b,big,blockquote,body,center,cite,code,dd,del,dfn,
 						let touchEndX = 0;
 						
 						$carousel.on('touchstart', function(e) {
-							touchStartX = e.originalEvent.touches[0].clientX;
+							if (e.originalEvent.touches && e.originalEvent.touches.length > 0) {
+								touchStartX = e.originalEvent.touches[0].clientX;
+							}
 						});
 						
 						$carousel.on('touchend', function(e) {
-							touchEndX = e.originalEvent.changedTouches[0].clientX;
-							const diff = touchStartX - touchEndX;
-							
-							if (Math.abs(diff) > 50) {
-								if (diff > 0) {
-									nextSlide();
-								} else {
-									prevSlide();
+							if (e.originalEvent.changedTouches && e.originalEvent.changedTouches.length > 0) {
+								touchEndX = e.originalEvent.changedTouches[0].clientX;
+								const diff = touchStartX - touchEndX;
+								
+								if (Math.abs(diff) > 50) {
+									if (diff > 0) {
+										nextSlide();
+									} else {
+										prevSlide();
+									}
+									resetAutoPlay();
 								}
-								stopAutoPlay();
-								startAutoPlay();
 							}
 						});
 						
